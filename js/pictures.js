@@ -2,6 +2,7 @@
 
 var COMMENTS = ['Всё отлично!', 'В целом всё неплохо. Но не всё.', 'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.', 'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.', 'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.', 'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'];
 var DESCRIPTIONS = ['Тестим новую камеру!', 'Затусили с друзьями на море', 'Как же круто тут кормят', 'Отдыхаем...', 'Цените каждое мгновенье. Цените тех, кто рядом с вами и отгоняйте все сомненья. Не обижайте всех словами......', 'Вот это тачка!'];
+var PHOTO_COUNT = 25;
 
 var pictureTemplate = document.querySelector('#picture').content.querySelector('.picture__link');
 var commentTemplate = document.querySelector('#picture').content.querySelector('.social__comment');
@@ -9,57 +10,46 @@ var picturesContainer = document.querySelector('.pictures');
 var bigPictureElement = document.querySelector('.big-picture');
 var commentsList = bigPictureElement.querySelector('.social__comments');
 
-var getRandomItem = function (array) {
-  return array[Math.floor(Math.random() * array.length)];
+var getRandomInteger = function (min, max) {
+  return Math.floor(Math.random() * (max + 1 - min)) + min;
 };
 
-var getRandomNum = function (num1, num2) {
-  return Math.round(Math.random() * (num2 - num1)) + num1;
-};
-
-var getUrlNumbers = function () {
-  var urlNumbers = [];
-  while (urlNumbers.length < 25) {
-    var number = getRandomNum(1, 25);
-    if (!urlNumbers.includes(number)) {
-      urlNumbers.push(number);
-    }
+var shuffle = function (arr, startIndex) {
+  for (var i = 0; i < startIndex; i++) {
+    var currentIndex = getRandomInteger(0, i);
+    var interimIndex = arr[currentIndex];
+    arr[currentIndex] = arr[i];
+    arr[i] = interimIndex;
   }
-  return urlNumbers;
+  return arr;
 };
 
-var getComments = function (commentsArray) {
-  var comments = [];
-  while (comments.length < commentsArray.length) {
-    var comment = getRandomItem(commentsArray);
-    if (!comments.includes(comment)) {
-      comments.push(comment);
-    }
-  }
-  return comments;
+var getRandomArr = function (target, length) {
+  var arr = target.slice();
+  shuffle(arr, arr.length);
+  return arr.slice(0, length);
 };
 
-var generatePhotoObj = function (num, comments, description) {
+var generatePhotoObj = function (num, comments, descriptions) {
   return {
     url: 'photos/' + num + '.jpg',
-    likes: getRandomNum(15, 200),
-    comments: getComments(comments),
-    description: getRandomItem(description)
+    likes: getRandomInteger(15, 200),
+    comments: getRandomArr(comments),
+    description: descriptions[getRandomInteger(0, descriptions.length - 1)]
   };
 };
 
 var generatePhotoList = function () {
   var pictures = [];
-  var urlNumbers = getUrlNumbers();
-  for (var i = 0; i < 25; i++) {
-    pictures.push(generatePhotoObj(urlNumbers[i], COMMENTS, DESCRIPTIONS));
+  for (var i = 1; i <= PHOTO_COUNT; i++) {
+    pictures.push(generatePhotoObj(i, COMMENTS, DESCRIPTIONS));
   }
   return pictures;
 };
 
 var pictures = generatePhotoList();
 
-var renderPicture = function (picture) {
+var createPicture = function (picture) {
   var pictureElement = pictureTemplate.cloneNode(true);
   pictureElement.querySelector('.picture__img').src = picture.url;
   pictureElement.querySelector('.picture__stat--likes').textContent = picture.likes;
@@ -67,29 +57,27 @@ var renderPicture = function (picture) {
   return pictureElement;
 };
 
-var renderPictures = function (pics) {
+var renderPictures = function (picturesArray) {
   var fragment = document.createDocumentFragment();
-  for (var i = 0; i < pics.length; i++) {
-    fragment.appendChild(renderPicture(pics[i]));
-  }
+  picturesArray.forEach(function (item) {
+    fragment.appendChild(createPicture(item));
+  });
   picturesContainer.appendChild(fragment);
 };
 
-renderPictures(pictures);
-
-var renderComment = function (commentText) {
+var createComment = function (commentText) {
   var commentElement = commentTemplate.cloneNode(true);
-  commentElement.querySelector('.social__picture').src = 'img/avatar-' + getRandomNum(1, 6) + '.svg';
+  commentElement.querySelector('.social__picture').src = 'img/avatar-' + getRandomInteger(1, 6) + '.svg';
   commentElement.appendChild(document.createTextNode(commentText));
   return commentElement;
 };
 
-var createCommentList = function (comments) {
+var renderCommentsList = function (comments) {
   commentsList.innerHTML = '';
   var fragment = document.createDocumentFragment();
-  for (var i = 0; i < comments.length; i++) {
-    fragment.appendChild(renderComment(comments[i]));
-  }
+  comments.forEach(function (comment) {
+    fragment.appendChild(createComment(comment));
+  });
   commentsList.appendChild(fragment);
 };
 
@@ -98,15 +86,15 @@ var renderBigPicture = function (picture) {
   bigPictureElement.querySelector('.big-picture__img img').src = picture.url;
   bigPictureElement.querySelector('.likes-count').textContent = picture.likes;
   bigPictureElement.querySelector('.comments-count').textContent = picture.comments.length;
-  createCommentList(picture.comments);
+  renderCommentsList(picture.comments);
   bigPictureElement.querySelector('.social__caption').textContent = picture.description;
 };
-
-renderBigPicture(pictures[0]);
 
 var hideCounters = function () {
   bigPictureElement.querySelector('.social__comment-count').classList.add('visually-hidden');
   bigPictureElement.querySelector('.social__loadmore').classList.add('visually-hidden');
 };
 
+renderPictures(pictures);
+renderBigPicture(pictures[0]);
 hideCounters();
