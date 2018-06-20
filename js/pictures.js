@@ -122,18 +122,40 @@ var pin = scale.querySelector('.scale__pin');
 
 var initialFilter = 'heat';
 var currentFilterClass = 'effects__preview--' + initialFilter;
-
+var initialEffectLevel = 100;
 
 var showUploadForm = function () {
   overlay.classList.remove('hidden');
   document.addEventListener('keydown', documentEscPressHandler);
   pictureUploaded.classList.add(currentFilterClass);
-  pin.style.left = '100%';
-  setEffectLevel(initialFilter, pictureUploaded);
-  uploadForm.addEventListener('change', formChangeHandler);
-  pin.addEventListener('mouseup', function () {
-    setEffectLevel(initialFilter, pictureUploaded);
+  setEffectLevel(initialFilter, initialEffectLevel, pictureUploaded);
+
+  pin.addEventListener('mousedown', function (evt) {
+    evt.preventDefault();
+    var scaleStart = pin.parentElement.getBoundingClientRect().left + pageXOffset + pin.offsetWidth / 2;
+    var scaleWidth = pin.parentElement.offsetWidth;
+    var startCoord = evt.clientX - scaleStart;
+
+    var mouseMoveHandler = function (moveEvt) {
+      moveEvt.preventDefault();
+      var shift = startCoord - (moveEvt.clientX - scaleStart);
+      var coordX = ((startCoord - pin.offsetWidth / 2 - shift) * 100 / scaleWidth);
+      if (coordX > 0 && coordX <= 100) {
+        setEffectLevel(initialFilter, coordX, pictureUploaded);
+        startCoord = moveEvt.clientX - scaleStart;
+      }
+    };
+
+    var pinMouseUpHandler = function () {
+      document.removeEventListener('mousemove', mouseMoveHandler);
+      document.removeEventListener('mouseup', pinMouseUpHandler);
+    };
+
+    document.addEventListener('mousemove', mouseMoveHandler);
+    document.addEventListener('mouseup', pinMouseUpHandler);
   });
+
+  uploadForm.addEventListener('change', formChangeHandler);
   increaseControl.addEventListener('click', function () {
     increaseSize(uploadForm['scale'], pictureUploaded);
   });
@@ -220,10 +242,11 @@ var effectsMap = {
   }
 };
 
-var setEffectLevel = function (effect, picture) {
-  scaleLevel.style.width = pin.style.left;
-  var level = parseInt(pin.style.left.slice(0, pin.style.left.length - 1), 10);
-  uploadForm['effect-level'].value = level;
+var setEffectLevel = function (effect, coord, picture) {
+  uploadForm['effect-level'] = coord;
+  pin.style.left = coord + '%';
+  scaleLevel.style.width = coord + '%';
+  var level = coord;
   if (effect === 'none') {
     picture.style.filter = '';
   } else {
@@ -245,11 +268,32 @@ var applyEffect = function (target) {
     }
     pictureUploaded.classList.add(filter);
     currentFilterClass = filter;
-    pin.style.left = '100%';
-    setEffectLevel(target.value, pictureUploaded);
+    setEffectLevel(target.value, initialEffectLevel, pictureUploaded);
 
-    pin.addEventListener('mouseup', function () {
-      setEffectLevel(target.value, pictureUploaded);
+    pin.addEventListener('mousedown', function (evt) {
+      evt.preventDefault();
+
+      var scaleStart = pin.parentElement.getBoundingClientRect().left + pageXOffset + pin.offsetWidth / 2;
+      var scaleWidth = pin.parentElement.offsetWidth;
+      var startCoord = evt.clientX - scaleStart;
+
+      var mouseMoveHandler = function (moveEvt) {
+        moveEvt.preventDefault();
+
+        var shift = startCoord - (moveEvt.clientX - scaleStart);
+        var coordX = ((startCoord - pin.offsetWidth / 2 - shift) * 100 / scaleWidth);
+        if (coordX > 0 && coordX <= 100) {
+          setEffectLevel(target.value, coordX, pictureUploaded);
+          startCoord = moveEvt.clientX - scaleStart;
+        }
+      };
+
+      var pinMouseUpHandler = function () {
+        document.removeEventListener('mousemove', mouseMoveHandler);
+      };
+
+      document.addEventListener('mousemove', mouseMoveHandler);
+      document.addEventListener('mouseup', pinMouseUpHandler);
     });
   }
 };
@@ -334,4 +378,3 @@ var validateHashtags = function (input, text) {
     input.style.borderColor = '';
   }
 };
-
