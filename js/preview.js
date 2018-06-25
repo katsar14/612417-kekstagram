@@ -17,9 +17,12 @@
   var renderCommentsList = function (comments) {
     commentsList.innerHTML = '';
     var fragment = document.createDocumentFragment();
-    comments.forEach(function (comment) {
-      fragment.appendChild(createComment(comment));
-    });
+    for (var i = 0; i < 5; i++) {
+      fragment.appendChild(createComment(comments[i]));
+    }
+    // comments.forEach(function (comment) {
+    //   fragment.appendChild(createComment(comment));
+    // });
     commentsList.appendChild(fragment);
   };
 

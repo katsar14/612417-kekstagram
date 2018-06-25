@@ -200,4 +200,22 @@
   uploadForm['filename'].addEventListener('change', function () {
     showUploadForm();
   });
+
+  var onLoad = function () {
+    hideUploadForm();
+  };
+
+  var onError = function () {
+    var errorTemplate = document.querySelector('#picture').content.querySelector('.img-upload__message--error');
+    var errorElement = errorTemplate.cloneNode(true);
+    overlay.appendChild(errorElement);
+    errorElement.style.zIndex = '1000';
+    errorElement.style.position = 'fixed';
+    errorElement.classList.remove('hidden');
+  };
+
+  uploadForm.addEventListener('submit', function (evt) {
+    window.backend.upload(new FormData(uploadForm), onLoad, onError);
+    evt.preventDefault();
+  });
 })();
