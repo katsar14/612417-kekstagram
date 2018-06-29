@@ -4,7 +4,7 @@
 (function () {
   var pictureTemplate = document.querySelector('#picture').content.querySelector('.picture__link');
 
-  window.createPicture = function (picture) {
+  var createPicture = function (picture) {
     var pictureElement = pictureTemplate.cloneNode(true);
     pictureElement.querySelector('.picture__img').src = picture.url;
     pictureElement.querySelector('.picture__stat--likes').textContent = picture.likes;
@@ -16,5 +16,9 @@
 
     return pictureElement;
   };
+
+  window.picture = {
+    createPicture: createPicture
+  }
 })();
 

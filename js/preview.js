@@ -3,9 +3,13 @@
 // модуль для отрисовки увеличенного изображения
 
 (function () {
+  var COMMENTS_NUMBER = 5;
+  var shownCommentsNumber = COMMENTS_NUMBER;
   var commentTemplate = document.querySelector('#picture').content.querySelector('.social__comment');
   var bigPicture = document.querySelector('.big-picture');
   var commentsList = bigPicture.querySelector('.social__comments');
+  var showMoreBtn = bigPicture.querySelector('.social__loadmore');
+  var commentsCounter = bigPicture.querySelector('.comments-shown');
 
   var createComment = function (commentText) {
     var commentElement = commentTemplate.cloneNode(true);
@@ -17,32 +21,29 @@
   var renderCommentsList = function (comments) {
     commentsList.innerHTML = '';
     var fragment = document.createDocumentFragment();
-    for (var i = 0; i < 5; i++) {
+    shownCommentsNumber = comments.length < COMMENTS_NUMBER ? comments.length : COMMENTS_NUMBER
+    for (var i = 0; i < shownCommentsNumber; i++) {
       fragment.appendChild(createComment(comments[i]));
     }
-    // comments.forEach(function (comment) {
-    //   fragment.appendChild(createComment(comment));
-    // });
+    commentsCounter.textContent = shownCommentsNumber;
     commentsList.appendChild(fragment);
-  };
-
-  var hideCounters = function () {
-    bigPicture.querySelector('.social__comment-count').classList.add('visually-hidden');
-    bigPicture.querySelector('.social__loadmore').classList.add('visually-hidden');
   };
 
   var bigPictureEcsPressHandler = function (evt) {
     window.utils.isEscEvent(evt, closeBigPicture);
   };
 
+  var BigPictureClickHandler = function (evt) {
+    if (evt.target.id === 'picture-cancel') {
+      evt.preventDefault();
+      closeBigPicture();
+    }
+  };
+
   var openBigPicture = function () {
     bigPicture.classList.remove('hidden');
     document.body.classList.add('modal-open');
-    bigPicture.addEventListener('click', function (evt) {
-      if (evt.target.id === 'picture-cancel') {
-        closeBigPicture();
-      }
-    });
+    bigPicture.addEventListener('click', BigPictureClickHandler);
     document.addEventListener('keydown', bigPictureEcsPressHandler);
   };
 
@@ -50,6 +51,12 @@
     bigPicture.classList.add('hidden');
     document.body.classList.remove('modal-open');
     document.removeEventListener('keydown', bigPictureEcsPressHandler);
+    bigPicture.removeEventListener('click', BigPictureClickHandler);
+    shownCommentsNumber = 5;
+    console.log(shownCommentsNumber)
+    showMoreBtn.removeEventListener('click', showMoreBtnClickHandler)
+
+
   };
 
   window.renderBigPicture = function (picture) {
@@ -58,7 +65,53 @@
     bigPicture.querySelector('.comments-count').textContent = picture.comments.length;
     renderCommentsList(picture.comments);
     bigPicture.querySelector('.social__caption').textContent = picture.description;
-    hideCounters();
     openBigPicture();
+    showMoreBtn.classList.remove('hidden');
+    if (picture.comments.length <= COMMENTS_NUMBER) {
+        showMoreBtn.classList.add('hidden');
+      }
+    showMoreBtn.addEventListener('click', showMoreBtnClickHandler)
+    //   evt.preventDefault();
+    //   console.log(picture.comments);
+
+    //   showMoreComments(picture.comments);
+    // });
   };
+
+  var showMoreComments = function (comments) {
+    console.log('shownCommentsNumber: ' + shownCommentsNumber)
+    console.log('comments length ' + comments.length)
+
+    var hiddenCommentsNumber = comments.length - shownCommentsNumber;
+    console.log('hiddenCommentsNumber: ' + hiddenCommentsNumber)
+    var commentsToShow = hiddenCommentsNumber < COMMENTS_NUMBER ? hiddenCommentsNumber : COMMENTS_NUMBER;
+    console.log('commentsToShow: ' + commentsToShow)
+
+    for (var i = shownCommentsNumber; i < shownCommentsNumber+commentsToShow; i++) {
+
+      commentsList.appendChild(createComment(comments[i]));
+    }
+    commentsCounter.textContent = shownCommentsNumber;
+
+    shownCommentsNumber += commentsToShow;
+    console.log('shownCommentsNumber2: ' + shownCommentsNumber)
+
+    commentsCounter.textContent = shownCommentsNumber;
+    if (shownCommentsNumber === comments.length) {
+      showMoreBtn.classList.add('hidden');
+    }
+  }
+
+  var showMoreBtnClickHandler = function (evt) {
+    evt.preventDefault();
+    console.log(picture.comments);
+
+      showMoreComments(picture.comments);
+  }
+
+
+
+
+
+
 })();

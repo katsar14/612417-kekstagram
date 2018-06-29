@@ -11,7 +11,7 @@
       if (xhr.status === 200) {
         onLoad(xhr.response);
       } else {
-        onError(xhr.status + ' ' + xhr.statusText);
+        onError('Произошла ошибка ' + xhr.status + ' ' + xhr.statusText);
       }
     });
 
@@ -30,7 +30,7 @@
 
   window.backend.upload = function (data, onLoad, onError) {
     var xhr = new XMLHttpRequest();
-    var url = 'https://js.dump.academy2/kekstagram';
+    var url = 'https://js.dump.academy/kekstagram';
     xhr.responseType = 'json';
 
     xhr.addEventListener('load', function () {
