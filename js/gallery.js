@@ -2,16 +2,18 @@
 
 (function () {
 
+  var picturesContainer = document.querySelector('.pictures');
+
   var renderedPictures = [];
 
-  var renderPictures = function (picturesArray, container) {
+  var renderPictures = function (picturesArray) {
     var fragment = document.createDocumentFragment();
     picturesArray.forEach(function (item) {
-      var pictureEl = window.createPicture(item);
+      var pictureEl = window.picture.createPicture(item);
       fragment.appendChild(pictureEl);
       renderedPictures.push(pictureEl);
     });
-    container.appendChild(fragment);
+    picturesContainer.appendChild(fragment);
   };
 
   window.gallery = {
@@ -24,6 +26,3 @@
     }
   };
 })();
-
-
-

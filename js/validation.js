@@ -1,6 +1,10 @@
 'use strict';
 
 (function () {
+  var COMMENT_MAX_LENGTH = 140;
+  var HASHTAGS_MAX_NUMBER = 5;
+  var HASHTAG_MAX_LENGTH = 20;
+
   var showError = function (input, errorText) {
     input.style.borderColor = 'red';
     input.setCustomValidity(errorText);
@@ -19,14 +23,14 @@
     return false;
   };
 
-  window.validateHashtags = function (input, text) {
+  var validateHashtags = function (input, text) {
     if (text) {
       var hashtags = text.trim().split(' ').filter(function (item) {
         return item !== '';
       });
       var error = '';
       var errors = [];
-      if (hashtags.length > 5) {
+      if (hashtags.length > HASHTAGS_MAX_NUMBER) {
         errors.push('Нельзя указать больше пяти хэш-тегов');
       }
       if (findDouble(hashtags)) {
@@ -38,17 +42,20 @@
           if (!errors.includes(error)) {
             errors.push(error);
           }
-        } else if (hashtag === '#') {
+        }
+        if (hashtag === '#') {
           error = 'Хеш-тег не может состоять только из одной решётки';
           if (!errors.includes(error)) {
             errors.push(error);
           }
-        } else if (hashtag.lastIndexOf('#') !== 0) {
+        }
+        if (hashtag.lastIndexOf('#') > 0) {
           error = 'Хэш-теги разделяются пробелами';
           if (!errors.includes(error)) {
             errors.push(error);
           }
-        } else if (hashtag.length > 20) {
+        }
+        if (hashtag.length > HASHTAG_MAX_LENGTH) {
           error = 'Максимальная длина одного хэш-тега 20 символов, включая решётку';
           if (!errors.includes(error)) {
             errors.push(error);
@@ -66,4 +73,24 @@
       input.style.borderColor = '';
     }
   };
+
+  var validateDescription = function (input, text) {
+    if (text) {
+      if (text.length > COMMENT_MAX_LENGTH) {
+        showError(input, 'Длина комментария не может составлять больше 140 символов');
+      } else {
+        input.setCustomValidity('');
+        input.style.borderColor = '';
+      }
+    } else {
+      input.setCustomValidity('');
+      input.style.borderColor = '';
+    }
+  };
+
+  window.validation = {
+    validateHashtags: validateHashtags,
+    validateDescription: validateDescription
+  };
+
 })();

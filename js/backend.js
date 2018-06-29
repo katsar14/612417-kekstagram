@@ -1,6 +1,8 @@
 'use strict';
 
 (function () {
+  var SUCCESS_CODE = 200;
+
   window.backend = {};
   window.backend.downloadData = function (onLoad, onError) {
     var xhr = new XMLHttpRequest();
@@ -8,7 +10,7 @@
     xhr.responseType = 'json';
 
     xhr.addEventListener('load', function () {
-      if (xhr.status === 200) {
+      if (xhr.status === SUCCESS_CODE) {
         onLoad(xhr.response);
       } else {
         onError('Произошла ошибка ' + xhr.status + ' ' + xhr.statusText);
@@ -34,10 +36,10 @@
     xhr.responseType = 'json';
 
     xhr.addEventListener('load', function () {
-      if (xhr.status === 200) {
-        onLoad(xhr.response);
+      if (xhr.status === SUCCESS_CODE) {
+        onLoad();
       } else {
-        onError(xhr.status + ' ' + xhr.statusText);
+        onError();
       }
     });
 

@@ -18,10 +18,8 @@
   });
 
   document.addEventListener('loadData', function (evt) {
-    evt.preventDefault;
-    var picturesContainer = document.querySelector('.pictures');
-    window.gallery.render(window.data.get(), picturesContainer);
-    window.filters.show(window.data.get(), picturesContainer);
+    evt.preventDefault();
+    window.gallery.render(window.data.get());
+    window.filters.show();
   });
-
 })();
