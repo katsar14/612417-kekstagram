@@ -1,7 +1,16 @@
 'use strict';
 
 (function () {
+  var DEBOUNCE_INTERVAL = 500;
+  var lastTimeout;
   var filtersBlock = document.querySelector('.img-filters');
+
+  var debounce = function (fun) {
+    if (lastTimeout) {
+      window.clearTimeout(lastTimeout);
+    }
+    lastTimeout = window.setTimeout(fun, DEBOUNCE_INTERVAL);
+  };
 
   var filterPopular = function () {
     window.gallery.clear();
@@ -33,15 +42,17 @@
 
   var filtersBlockClickHandler = function (evt) {
     evt.preventDefault();
-    if (evt.target.id === 'filter-popular') {
-      filterPopular();
-    }
-    if (evt.target.id === 'filter-new') {
-      filterNew();
-    }
-    if (evt.target.id === 'filter-discussed') {
-      filterDiscussed();
-    }
+    debounce(function () {
+      if (evt.target.id === 'filter-popular') {
+        filterPopular();
+      }
+      if (evt.target.id === 'filter-new') {
+        filterNew();
+      }
+      if (evt.target.id === 'filter-discussed') {
+        filterDiscussed();
+      }
+    });
   };
 
   var showFilters = function () {
