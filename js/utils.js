@@ -2,7 +2,6 @@
 
 (function () {
   var ESC_KEYCODE = 27;
-  var ENTER_KEYCODE = 13;
 
   window.utils = {
     isEscEvent: function (evt, callback) {
@@ -10,13 +9,19 @@
         callback();
       }
     },
-    isEnterEvent: function (evt, callback) {
-      if (evt.keyCode === ENTER_KEYCODE) {
-        callback();
-      }
-    },
+
     getRandomInteger: function (min, max) {
       return Math.floor(Math.random() * (max + 1 - min)) + min;
+    },
+
+    shuffle: function (arr, startIndex) {
+      for (var i = 0; i < startIndex; i++) {
+        var currentIndex = window.utils.getRandomInteger(0, i);
+        var interimIndex = arr[currentIndex];
+        arr[currentIndex] = arr[i];
+        arr[i] = interimIndex;
+      }
+      return arr;
     }
   };
 })();
