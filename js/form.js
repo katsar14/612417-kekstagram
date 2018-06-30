@@ -1,6 +1,13 @@
 'use strict';
 
 (function () {
+  var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
+  var INITIAL_FILTER = 'heat';
+  var INITIAL_EFFECT_LEVEL = 100;
+
+  var currentFilterClass = 'effects__preview--' + INITIAL_FILTER;
+  var filterName;
+
   var uploadForm = document.querySelector('#upload-select-image');
   var overlay = uploadForm.querySelector('.img-upload__overlay');
   var cancelButton = uploadForm.querySelector('#upload-cancel');
@@ -8,16 +15,12 @@
   var decreaseControl = sizeControlsBlock.querySelector('.resize__control--minus');
   var increaseControl = sizeControlsBlock.querySelector('.resize__control--plus');
   var pictureUploaded = uploadForm.querySelector('.img-upload__preview');
+  var preview = pictureUploaded.querySelector('img');
   var scale = uploadForm.querySelector('.scale');
   var scaleLevel = scale.querySelector('.scale__level');
   var pin = scale.querySelector('.scale__pin');
   var hashtagInput = uploadForm.hashtags;
   var description = uploadForm.description;
-
-  var INITIAL_FILTER = 'heat';
-  var currentFilterClass = 'effects__preview--' + INITIAL_FILTER;
-  var INITIAL_EFFECT_LEVEL = 100;
-  var filterName;
 
 
   var showUploadForm = function () {
@@ -178,10 +181,6 @@
     }
   };
 
-  uploadForm['filename'].addEventListener('change', function () {
-    showUploadForm();
-  });
-
   var onImgUpload = function () {
     hideUploadForm();
   };
@@ -228,4 +227,25 @@
     document.addEventListener('mousemove', pinMouseMoveHandler);
     document.addEventListener('mouseup', pinMouseUpHandler);
   };
+
+  uploadForm.filename.addEventListener('change', function () {
+    var file = uploadForm.filename.files[0];
+    var fileName = file.name.toLowerCase();
+
+    var matches = FILE_TYPES.some(function (type) {
+      return fileName.endsWith(type);
+    });
+
+    if (matches) {
+      var reader = new FileReader();
+      var fileUploadHandler = function () {
+        preview.src = reader.result;
+        reader.removeEventListener('load', fileUploadHandler);
+      };
+      reader.addEventListener('load', fileUploadHandler);
+      reader.readAsDataURL(file);
+    }
+
+    showUploadForm();
+  });
 })();

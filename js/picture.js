@@ -11,9 +11,8 @@
     pictureElement.querySelector('.picture__stat--comments').textContent = picture.comments.length;
 
     pictureElement.addEventListener('click', function () {
-      window.renderBigPicture(picture);
+      window.preview.render(picture);
     });
-
     return pictureElement;
   };
 
