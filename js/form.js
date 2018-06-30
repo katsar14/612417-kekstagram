@@ -27,6 +27,7 @@
     overlay.classList.remove('hidden');
     document.addEventListener('keydown', formEscPressHandler);
     pictureUploaded.classList.add(currentFilterClass);
+    console.log(currentFilterClass);
     setEffectLevel(INITIAL_FILTER, INITIAL_EFFECT_LEVEL);
     filterName = INITIAL_FILTER;
     pin.addEventListener('mousedown', pinMouseDownHandler);
@@ -66,6 +67,7 @@
     pin.removeEventListener('mousedown', pinMouseDownHandler);
     uploadForm.removeEventListener('submit', uploadFormSubmitHandler);
     pictureUploaded.style.transform = 'scale(1)';
+    currentFilterClass = 'effects__preview--' + INITIAL_FILTER;
   };
 
   var formEscPressHandler = function (evt) {
