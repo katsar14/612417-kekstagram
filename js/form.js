@@ -27,7 +27,6 @@
     overlay.classList.remove('hidden');
     document.addEventListener('keydown', formEscPressHandler);
     pictureUploaded.classList.add(currentFilterClass);
-    console.log(currentFilterClass);
     setEffectLevel(INITIAL_FILTER, INITIAL_EFFECT_LEVEL);
     filterName = INITIAL_FILTER;
     pin.addEventListener('mousedown', pinMouseDownHandler);
