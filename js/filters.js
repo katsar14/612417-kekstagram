@@ -18,10 +18,10 @@
   };
 
   var filterDiscussed = function () {
-    var discussedPictures = window.data.get().slice().sort(function (a, b) {
-      if (a.comments.length < b.comments.length) {
+    var discussedPictures = window.data.get().slice().sort(function (object1, object2) {
+      if (object1.comments.length < object2.comments.length) {
         return 1;
-      } else if (a.comments.length > b.comments.length) {
+      } else if (object1.comments.length > object2.comments.length) {
         return -1;
       } else {
         return 0;
