@@ -18,8 +18,7 @@
   };
 
   var filterDiscussed = function () {
-    var copy = window.data.get().slice();
-    var discussedPictures = copy.sort(function (a, b) {
+    var discussedPictures = window.data.get().slice().sort(function (a, b) {
       if (a.comments.length < b.comments.length) {
         return 1;
       } else if (a.comments.length > b.comments.length) {
