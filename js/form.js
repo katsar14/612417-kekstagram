@@ -4,6 +4,9 @@
   var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
   var INITIAL_FILTER = 'heat';
   var INITIAL_EFFECT_LEVEL = 100;
+  var MAX_PICTURE_SIZE = 100;
+  var MIN_PICTURE_SIZE = 25;
+  var SIZE_CHANGE_STEP = 25;
 
   var currentFilterClass = 'effects__preview--' + INITIAL_FILTER;
   var filterName;
@@ -74,9 +77,9 @@
       window.utils.isEscEvent(evt, function () {
         evt.stopPropagation();
       });
-    } else {
-      window.utils.isEscEvent(evt, hideUploadForm);
+      return;
     }
+    window.utils.isEscEvent(evt, hideUploadForm);
   };
 
   // изменение размеров изображения
@@ -92,8 +95,8 @@
 
   var increaseSize = function (inputEl, pictureEl) {
     var num = parseInt(inputEl.value.slice(0, inputEl.value.length - 1), 10);
-    if (num < 100) {
-      num += 25;
+    if (num < MAX_PICTURE_SIZE) {
+      num += SIZE_CHANGE_STEP;
       pictureEl.style.transform = 'scale(' + num / 100 + ')';
     }
     inputEl.value = num + '%';
@@ -101,8 +104,8 @@
 
   var decreaseSize = function (inputEl, pictureEl) {
     var num = parseInt(inputEl.value.slice(0, inputEl.value.length - 1), 10);
-    if (num > 25) {
-      num -= 25;
+    if (num > MIN_PICTURE_SIZE) {
+      num -= SIZE_CHANGE_STEP;
       pictureEl.style.transform = 'scale(' + num / 100 + ')';
     }
     inputEl.value = num + '%';
@@ -168,6 +171,7 @@
       }
       filterName = target.value;
       pin.addEventListener('mousedown', pinMouseDownHandler);
+      pin.addEventListener('keydown', pinKeyPressHandler); //////////////////////////////////////////////
     }
     pictureUploaded.classList.add(filter);
     currentFilterClass = filter;
@@ -213,7 +217,7 @@
       moveEvt.preventDefault();
 
       var shift = startCoord - (moveEvt.clientX - scaleStart);
-      var coordX = ((startCoord - pin.offsetWidth / 2 - shift) * 100 / scaleWidth);
+      var coordX = ((startCoord - shift) * 100 / scaleWidth);
       if (coordX > MIN_COORD && coordX <= MAX_COORD) {
         setEffectLevel(filterName, coordX);
         startCoord = moveEvt.clientX - scaleStart;
@@ -248,5 +252,37 @@
     }
 
     showUploadForm();
+pin.addEventListener('keydown', pinKeyPressHandler);
+
   });
+// })();
+
+
+var pinKeyPressHandler = function (evt) {
+  evt.preventDefault();
+  var MIN_COORD = 0;
+  var MAX_COORD = 453;
+  var STEP = 1;
+  var ARROW_LEFT_CODE = 37;
+  var ARROW_RIGHT_CODE = 39;
+  var coordX = evt.target.offsetLeft;
+  var value;
+
+  if (evt.keyCode === ARROW_LEFT_CODE) {
+    if (coordX > MIN_COORD) {
+      coordX -= STEP;
+      value = coordX * 100 / 453
+      setEffectLevel(filterName, value);
+    }
+  }
+
+  if (evt.keyCode === ARROW_RIGHT_CODE) {
+    if (coordX < MAX_COORD) {
+      coordX += STEP
+        setEffectLevel(filterName, (coordX*100/453));
+    }
+  }
+  };
+
+
 })();

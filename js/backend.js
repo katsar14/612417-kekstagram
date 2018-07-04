@@ -2,11 +2,13 @@
 
 (function () {
   var SUCCESS_CODE = 200;
+  var DOWNLOAD_URL = 'https://js.dump.academy/kekstagram/data';
+  var UPLOAD_URL = 'https://js.dump.academy/kekstagram';
 
   window.backend = {};
   window.backend.downloadData = function (onLoad, onError) {
     var xhr = new XMLHttpRequest();
-    var url = 'https://js.dump.academy/kekstagram/data';
+    var url = DOWNLOAD_URL;
     xhr.responseType = 'json';
 
     xhr.addEventListener('load', function () {
@@ -32,7 +34,7 @@
 
   window.backend.upload = function (data, onLoad, onError) {
     var xhr = new XMLHttpRequest();
-    var url = 'https://js.dump.academy/kekstagram';
+    var url = UPLOAD_URL;
     xhr.responseType = 'json';
 
     xhr.addEventListener('load', function () {
