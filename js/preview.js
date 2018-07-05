@@ -66,11 +66,11 @@
     bigPicture.classList.remove('hidden');
     document.body.classList.add('modal-open');
 
-    var BigPictureClickHandler = function (evt) {
+    var bigPictureClickHandler = function (evt) {
       if (evt.target.id === 'picture-cancel') {
         evt.preventDefault();
         closeBigPicture();
-        bigPicture.removeEventListener('click', BigPictureClickHandler);
+        bigPicture.removeEventListener('click', bigPictureClickHandler);
         document.removeEventListener('keydown', bigPictureEcsPressHandler);
       }
       if (evt.target === showMoreBtn) {
@@ -81,12 +81,12 @@
     var bigPictureEcsPressHandler = function (evt) {
       window.utils.isEscEvent(evt, function () {
         closeBigPicture();
-        bigPicture.removeEventListener('click', BigPictureClickHandler);
+        bigPicture.removeEventListener('click', bigPictureClickHandler);
         document.removeEventListener('keydown', bigPictureEcsPressHandler);
       });
     };
 
-    bigPicture.addEventListener('click', BigPictureClickHandler);
+    bigPicture.addEventListener('click', bigPictureClickHandler);
     document.addEventListener('keydown', bigPictureEcsPressHandler);
   };
 
