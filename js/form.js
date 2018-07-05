@@ -33,6 +33,7 @@
     setEffectLevel(INITIAL_FILTER, INITIAL_EFFECT_LEVEL);
     filterName = INITIAL_FILTER;
     pin.addEventListener('mousedown', pinMouseDownHandler);
+    pin.addEventListener('keydown', pinKeyPressHandler);
 
     uploadForm.addEventListener('change', formChangeHandler);
 
@@ -67,6 +68,7 @@
     hashtagInput.removeEventListener('click', hashtagInputHandler);
     description.removeEventListener('click', descriptionInputHandler);
     pin.removeEventListener('mousedown', pinMouseDownHandler);
+    pin.removeEventListener('keydown', pinKeyPressHandler);
     uploadForm.removeEventListener('submit', uploadFormSubmitHandler);
     pictureUploaded.style.transform = 'scale(1)';
     currentFilterClass = 'effects__preview--' + INITIAL_FILTER;
@@ -165,13 +167,14 @@
     if (target.value === 'none') {
       scale.classList.add('hidden');
       pin.removeEventListener('mousedown', pinMouseDownHandler);
+      pin.removeEventListener('keydown', pinKeyPressHandler);
     } else {
       if (scale.classList.contains('hidden')) {
         scale.classList.remove('hidden');
       }
       filterName = target.value;
       pin.addEventListener('mousedown', pinMouseDownHandler);
-      pin.addEventListener('keydown', pinKeyPressHandler); //////////////////////////////////////////////
+      pin.addEventListener('keydown', pinKeyPressHandler);
     }
     pictureUploaded.classList.add(filter);
     currentFilterClass = filter;
@@ -209,7 +212,7 @@
     evt.preventDefault();
     var MIN_COORD = 0;
     var MAX_COORD = 100;
-    var scaleStart = pin.parentElement.getBoundingClientRect().left + pageXOffset + pin.offsetWidth / 2;
+    var scaleStart = pin.parentElement.getBoundingClientRect().left + pageXOffset;
     var scaleWidth = pin.parentElement.offsetWidth;
     var startCoord = evt.clientX - scaleStart;
 
@@ -233,6 +236,31 @@
     document.addEventListener('mouseup', pinMouseUpHandler);
   };
 
+  var pinKeyPressHandler = function (evt) {
+    evt.preventDefault();
+    var MIN_COORD = 0;
+    var MAX_COORD = 453;
+    var STEP = 1;
+    var ARROW_LEFT_CODE = 37;
+    var ARROW_RIGHT_CODE = 39;
+    var coordX = evt.target.offsetLeft;
+
+    if (evt.keyCode === ARROW_LEFT_CODE) {
+      if (coordX > MIN_COORD) {
+        coordX -= STEP;
+      }
+    }
+
+    if (evt.keyCode === ARROW_RIGHT_CODE) {
+      if (coordX < MAX_COORD) {
+        coordX += STEP;
+      }
+    }
+
+    var value = coordX * 100 / MAX_COORD;
+    setEffectLevel(filterName, value);
+  };
+
   uploadForm.filename.addEventListener('change', function () {
     var file = uploadForm.filename.files[0];
     var fileName = file.name.toLowerCase();
@@ -252,37 +280,6 @@
     }
 
     showUploadForm();
-pin.addEventListener('keydown', pinKeyPressHandler);
-
   });
-// })();
-
-
-var pinKeyPressHandler = function (evt) {
-  evt.preventDefault();
-  var MIN_COORD = 0;
-  var MAX_COORD = 453;
-  var STEP = 1;
-  var ARROW_LEFT_CODE = 37;
-  var ARROW_RIGHT_CODE = 39;
-  var coordX = evt.target.offsetLeft;
-  var value;
-
-  if (evt.keyCode === ARROW_LEFT_CODE) {
-    if (coordX > MIN_COORD) {
-      coordX -= STEP;
-      value = coordX * 100 / 453
-      setEffectLevel(filterName, value);
-    }
-  }
-
-  if (evt.keyCode === ARROW_RIGHT_CODE) {
-    if (coordX < MAX_COORD) {
-      coordX += STEP
-        setEffectLevel(filterName, (coordX*100/453));
-    }
-  }
-  };
-
 
 })();

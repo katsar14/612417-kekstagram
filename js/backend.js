@@ -56,4 +56,30 @@
     xhr.open('POST', url);
     xhr.send(data);
   };
+
+  var loadData = function (onLoad, onError, url, method, data) {
+    var xhr = new XMLHttpRequest();
+    xhr.responseType = 'json';
+
+    xhr.addEventListener('load', function () {
+      if (xhr.status === SUCCESS_CODE) {
+        onLoad();
+      } else {
+        onError('Произошла ошибка соединения!  Пожалуйста, попробуйте позже');
+      }
+    });
+
+    xhr.addEventListener('error', function () {
+      onError();
+    });
+
+    xhr.addEventListener('timeout', function () {
+      onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
+    });
+
+    xhr.open(method, url);
+    xhr.send(data);
+  }
+
+
 })();
