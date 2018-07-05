@@ -205,7 +205,7 @@
 
   var uploadFormSubmitHandler = function (evt) {
     evt.preventDefault();
-    window.backend.upload(new FormData(uploadForm), onImgUpload, onUploadError);
+    window.backend.upload(onImgUpload, onUploadError, new FormData(uploadForm));
   };
 
   var pinMouseDownHandler = function (evt) {
