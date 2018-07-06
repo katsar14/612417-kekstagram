@@ -7,6 +7,12 @@
   var MAX_PICTURE_SIZE = 100;
   var MIN_PICTURE_SIZE = 25;
   var SIZE_CHANGE_STEP = 25;
+  var MIN_COORD = 0;
+  var MAX_COORD = 100;
+  var SCALE_END = 453;
+  var STEP = 1;
+  var ARROW_LEFT_CODE = 37;
+  var ARROW_RIGHT_CODE = 39;
 
   var currentFilterClass = 'effects__preview--' + INITIAL_FILTER;
   var filterName;
@@ -75,13 +81,9 @@
   };
 
   var formEscPressHandler = function (evt) {
-    if (evt.target === description) {
-      window.utils.isEscEvent(evt, function () {
-        evt.stopPropagation();
-      });
-      return;
+    if (evt.target !== description) {
+      window.utils.isEscEvent(evt, hideUploadForm);
     }
-    window.utils.isEscEvent(evt, hideUploadForm);
   };
 
   // изменение размеров изображения
@@ -210,8 +212,6 @@
 
   var pinMouseDownHandler = function (evt) {
     evt.preventDefault();
-    var MIN_COORD = 0;
-    var MAX_COORD = 100;
     var scaleStart = pin.parentElement.getBoundingClientRect().left + pageXOffset;
     var scaleWidth = pin.parentElement.offsetWidth;
     var startCoord = evt.clientX - scaleStart;
@@ -238,11 +238,6 @@
 
   var pinKeyPressHandler = function (evt) {
     evt.preventDefault();
-    var MIN_COORD = 0;
-    var MAX_COORD = 453;
-    var STEP = 1;
-    var ARROW_LEFT_CODE = 37;
-    var ARROW_RIGHT_CODE = 39;
     var coordX = evt.target.offsetLeft;
 
     if (evt.keyCode === ARROW_LEFT_CODE) {
@@ -252,12 +247,12 @@
     }
 
     if (evt.keyCode === ARROW_RIGHT_CODE) {
-      if (coordX < MAX_COORD) {
+      if (coordX < SCALE_END) {
         coordX += STEP;
       }
     }
 
-    var value = coordX * 100 / MAX_COORD;
+    var value = coordX * 100 / SCALE_END;
     setEffectLevel(filterName, value);
   };
 

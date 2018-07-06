@@ -4,11 +4,7 @@
   var DEBOUNCE_INTERVAL = 500;
   var lastTimeout;
   var filtersBlock = document.querySelector('.img-filters__form');
-  var Filter = {
-    POPULAR: 'filter-popular',
-    NEW: 'filter-new',
-    DISCUSSED: 'filter-discussed'
-  };
+  var currentFilter = filtersBlock.querySelector('.img-filters__button--active');
 
   var debounce = function (fun) {
     if (lastTimeout) {
@@ -44,31 +40,23 @@
     window.gallery.render(newPictures);
   };
 
+  var filtersMap = {
+    'popular': filterPopular,
+    'new': filterNew,
+    'discussed': filterDiscussed
+  };
+
   var filtersBlockClickHandler = function (evt) {
     evt.preventDefault();
-
-    var buttons = filtersBlock.children;
-    [].forEach.call(buttons, function (item) {
-      if (item === evt.target) {
-        if (!item.classList.contains('img-filters__button--active')) {
-          item.classList.add('img-filters__button--active');
-        }
-      } else {
-        item.classList.remove('img-filters__button--active');
-      }
-    });
-
-    debounce(function () {
-      if (evt.target.id === Filter.POPULAR) {
-        filterPopular();
-      }
-      if (evt.target.id === Filter.NEW) {
-        filterNew();
-      }
-      if (evt.target.id === Filter.DISCUSSED) {
-        filterDiscussed();
-      }
-    });
+    var filterName = evt.target.id.slice(evt.target.id.indexOf('-') + 1);
+    if (event.target.tagName.toLowerCase() === 'button') {
+      currentFilter.classList.remove('img-filters__button--active');
+      currentFilter = event.target;
+      currentFilter.classList.add('img-filters__button--active');
+      debounce(function () {
+        filtersMap[filterName]();
+      });
+    }
   };
 
   var showFilters = function () {
